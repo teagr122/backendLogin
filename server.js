@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors'); 
 const app = express();
 const port = process.env.PORT || 4500;
 
@@ -9,7 +10,7 @@ mongoose.connect('mongodb://127.0.0.1/restapi_login', {
 });
 
 app.use(express.json());
-
+app.use(cors()); 
 
 const authRoutes = require('./routes/auth');
 app.use('/auth', authRoutes);

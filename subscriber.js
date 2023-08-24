@@ -1,7 +1,7 @@
 const amqp = require('amqplib');
 const mongoose = require('mongoose');
 
-// Set up MongoDB connection
+
 mongoose.connect('mongodb://127.0.0.1/data_tamu', {
   useNewUrlParser: true,
   useUnifiedTopology: true
