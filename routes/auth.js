@@ -2,17 +2,13 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const uuid = require('uuid');
 const jwt = require('jsonwebtoken');
-const cors = require('cors'); 
 const router = express.Router();
 
-const User = require('../models/user'); 
-
-
-router.use(cors());
+const User = require('../models/user');
 
 router.post('/register', async (req, res) => {
   try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 20);
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const newUser = new User({
       userId: uuid.v4(),
       username: req.body.username,
@@ -27,20 +23,27 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.body.username });
+    const { username, password } = req.body;
+
+    const user = await User.findOne({ username });
+
     if (!user) {
       return res.status(404).send('User not found');
     }
-    const passwordMatch = await bcrypt.compare(req.body.password, user.password);
-    if (!passwordMatch) {
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (passwordMatch) {
+      const token = jwt.sign({ userId: user._id }, 'secretKey');
+      return res.status(200).json({ token });
+    } else {
       return res.status(401).send('Invalid login credentials');
     }
-    const token = jwt.sign({ userId: user._id }, 'secretKey');
-    res.status(200).json({ token });
   } catch (error) {
+    console.error('Error during login:', error); // Menampilkan pesan kesalahan
     res.status(500).send(error.message);
   }
-});
+}); 
 
 router.get('/users', async (req, res) => {
   try {

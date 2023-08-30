@@ -10,7 +10,7 @@ mongoose.connect('mongodb://127.0.0.1/restapi_login', {
 });
 
 app.use(express.json());
-app.use(cors()); 
+app.use(cors("http://localhost:3000"));
 
 const authRoutes = require('./routes/auth');
 app.use('/auth', authRoutes);
